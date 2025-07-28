@@ -6,8 +6,8 @@ import Admin from './components/admin.vue';
 
 // Define routes
 const routes = [
-  { path: '/', redirect: '/pharmacy-survey' }, // Add redirect for root
-  { path: '/pharmacy-survey', component: Main },
+
+  { path: '/', component: Main },
   { path: '/admin', component: Admin },
   { path: '/:pathMatch(.*)*', redirect: '/pharmacy-survey' } // Catch all route
 ];

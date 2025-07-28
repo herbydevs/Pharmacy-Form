@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="isLoggedIn">
     <h1>Admin View</h1>
     <button @click="downloadExcel" class="download-button">Download as Excel</button>
     <table class="table">
@@ -33,6 +33,29 @@
       </tbody>
     </table>
   </div>
+  <div v-else>
+    <div class="login-container" v-if="!isLoggedIn">
+    <h1>Admin Login</h1>
+    <form @submit.prevent="handleLogin">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input v-model="username" id="username" type="text" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input v-model="password" id="password" type="password" required />
+      </div>
+      <button type="submit" class="login-button">Login</button>
+      <p v-if="loginError" class="error">{{ loginError }}</p>
+    </form>
+  </div>
+  <div v-else>
+    <h2>Welcome, {{ username }}!</h2>
+    <button @click="logout" class="logout-button">Logout</button>
+    <p class="success">You are now logged in as admin.</p>
+    <!-- You can add your admin content here -->
+  </div>
+  </div>
 </template>
 
 <script setup>
@@ -41,6 +64,7 @@ import axios from 'axios';
 import * as XLSX from 'xlsx';
 
 const formEntries = ref([]);
+
 
 const fetchFormEntries = async () => {
   try {
@@ -84,6 +108,38 @@ const downloadExcel = () => {
 onMounted(() => {
   fetchFormEntries();
 });
+
+
+const validUsers = [
+  { username: 'admin', password: 'woohooitsme' },
+  { username: 'superman', password: 'supersecret' },
+  // Add more users as needed
+];
+
+const username = ref('');
+const password = ref('');
+const isLoggedIn = ref(false);
+const loginError = ref('');
+
+function handleLogin() {
+  const found = validUsers.find(
+    user => user.username === username.value && user.password === password.value
+  );
+  if (found) {
+    isLoggedIn.value = true;
+    loginError.value = '';
+  } else {
+    loginError.value = 'Invalid username or password.';
+  }
+}
+
+function logout() {
+  isLoggedIn.value = false;
+  username.value = '';
+  password.value = '';
+  loginError.value = '';
+}
+
 </script>
 
 <style scoped>
@@ -149,5 +205,67 @@ h1 {
 
 .table td {
   vertical-align: top;
+}
+
+
+.login-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.login-button, .logout-button {
+  width: 100%;
+  padding: 10px;
+  background: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.login-button:hover, .logout-button:hover {
+  background: #0056b3;
+}
+
+.error {
+  color: #d32f2f;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.success {
+  color: #388e3c;
+  margin-top: 18px;
+  text-align: center;
 }
 </style>
