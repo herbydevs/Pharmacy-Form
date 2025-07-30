@@ -68,7 +68,7 @@ const formEntries = ref([]);
 
 const fetchFormEntries = async () => {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/entries'); // Adjust the URL as needed
+    const response = await axios.get('http://10.1.181.116:8000/entries'); // Adjust the URL as needed
     formEntries.value = response.data;
   } catch (error) {
     console.error('Error fetching form entries:', error);
